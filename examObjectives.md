@@ -1,4 +1,4 @@
-# Study Guide
+# Exam Objectives  
 
 ## 1.0 System Management
 

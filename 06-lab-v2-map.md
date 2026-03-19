@@ -14,6 +14,20 @@
   - [Module 8 — Containers and Virtualization](#module-8--containers-and-virtualization)
   - [Module 9 — Automation, Git, Python, and AI-Assisted Administration](#module-9--automation-git-python-and-ai-assisted-administration)
   - [Module 10 — Monitoring, Performance, and Troubleshooting](#module-10--monitoring-performance-and-troubleshooting)
+- [Section 7 — Difficulty Progression](#section-7--difficulty-progression)
+  - [7.1 Progression Model](#71-progression-model)
+  - [7.2 Difficulty Bands by Module](#72-difficulty-bands-by-module)
+  - [7.3 Recommended Learning Path](#73-recommended-learning-path)
+  - [7.4 Progression Rules for Exercise Design](#74-progression-rules-for-exercise-design)
+- [Section 8 — Instructor Guidance](#section-8--instructor-guidance)
+  - [8.1 Recommended Teaching Order](#81-recommended-teaching-order)
+  - [8.2 Expected Completion Time](#82-expected-completion-time)
+  - [8.3 Suggested Lab Pacing](#83-suggested-lab-pacing)
+  - [8.4 Instructor Delivery Notes](#84-instructor-delivery-notes)
+  - [8.5 Optional Advanced Extensions](#85-optional-advanced-extensions)
+  - [8.6 Assessment Recommendations](#86-assessment-recommendations)
+- [Program Summary](#program-summary)
+  - [Coverage Statement](#coverage-statement)
 
 
 ## Repository Purpose
@@ -337,3 +351,240 @@ Applies monitoring concepts and systematic troubleshooting across hardware, stor
 * use evidence-driven remediation workflows
 
 ---
+
+
+# Section 7 — Difficulty Progression
+
+## 7.1 Progression Model
+
+```text
+Beginner -> Intermediate -> Advanced -> Scenario-based
+```
+
+---
+
+## 7.2 Difficulty Bands by Module
+
+| Stage          | Characteristics                                                                                     | Modules / Activities                       |
+| -------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Beginner       | single-command inspection, direct lookup, local host changes                                        | Modules 1, 2, early 3, early 4, early 5    |
+| Intermediate   | multi-step workflows, persistence, package/service management, basic automation                     | late 3, 4, 5, 6, early 7, early 8, early 9 |
+| Advanced       | policy controls, storage expansion, container lifecycle, identity concepts, orchestrated automation | late 6, 7, 8, 9, gap coverage labs         |
+| Scenario-based | incomplete information, cross-domain diagnosis, service restoration                                 | Module 10, Section 5 capstones             |
+
+---
+
+## 7.3 Recommended Learning Path
+
+### Phase 1 — Foundations
+
+* Module 1
+* Module 2
+* Module 4 basics
+* Module 5 basics
+
+### Phase 2 — Core Administration
+
+* Module 3
+* Module 5
+* Module 6
+
+### Phase 3 — Secure Operations
+
+* Module 7
+* targeted Section 4 security and identity labs
+
+### Phase 4 — Modern Linux Operations
+
+* Module 8
+* Module 9
+* automation integration labs
+
+### Phase 5 — Operations Readiness
+
+* Module 10
+* Section 4 gap coverage labs
+* Section 5 capstone scenarios
+
+---
+
+## 7.4 Progression Rules for Exercise Design
+
+### Early Exercises
+
+* one tool at a time
+* local host only
+* explicit task targets
+* low-risk changes
+* immediate visible results
+
+### Mid-Curriculum Exercises
+
+* combine 2 to 4 tools
+* introduce persistence and recovery
+* begin multi-host workflows
+* require written operational notes
+
+### Late Exercises
+
+* incomplete or noisy symptoms
+* multiple valid data sources
+* remediation with justification
+* security and automation constraints
+* restoration of service, not only diagnosis
+
+---
+
+# Section 8 — Instructor Guidance
+
+## 8.1 Recommended Teaching Order
+
+1. Lab build and baseline validation
+2. Linux foundations and shell operations
+3. boot, device, and kernel concepts
+4. storage and backup
+5. networking
+6. users, permissions, and process control
+7. packages, services, and systemd
+8. security and compliance
+9. containers and virtualization
+10. automation, Git, and Python
+11. monitoring and troubleshooting
+12. capstone scenarios
+
+---
+
+## 8.2 Expected Completion Time
+
+| Training Segment                  | Estimated Time  |
+| --------------------------------- | --------------- |
+| Lab build and automation baseline | 6 to 10 hours   |
+| Modules 1 to 3                    | 12 to 16 hours  |
+| Modules 4 to 6                    | 14 to 18 hours  |
+| Module 7                          | 12 to 16 hours  |
+| Modules 8 and 9                   | 12 to 16 hours  |
+| Module 10                         | 8 to 12 hours   |
+| Gap coverage labs                 | 16 to 24 hours  |
+| Capstone scenarios                | 10 to 15 hours  |
+| Total program estimate            | 90 to 127 hours |
+
+---
+
+## 8.3 Suggested Lab Pacing
+
+### Cohort Delivery Model
+
+| Week | Focus                                     |
+| ---- | ----------------------------------------- |
+| 1    | lab build, Linux foundations              |
+| 2    | shell, boot, hardware, filesystems        |
+| 3    | storage, backup, networking               |
+| 4    | users, permissions, processes, scheduling |
+| 5    | packages, services, systemd               |
+| 6    | security hardening and firewalls          |
+| 7    | identity, crypto, compliance              |
+| 8    | containers, virtualization, automation    |
+| 9    | Python, Git, AI best practices            |
+| 10   | monitoring, troubleshooting, capstones    |
+
+### Self-Paced Model
+
+* target 8 to 12 exercises per week
+* require lab notes after each module
+* require one rebuild of at least one node
+* require at least three incident-style writeups before capstones
+
+---
+
+## 8.4 Instructor Delivery Notes
+
+### Recommended Practices
+
+* require command logging or markdown lab notes
+* demonstrate once, then require independent repetition
+* review both successful and failed attempts
+* use snapshots before destructive labs
+* grade for method, not only final state
+* require students to justify remediations
+
+### Validation Standards
+
+Students should be able to:
+
+* explain what they changed
+* explain why they changed it
+* verify the outcome
+* revert or recover safely
+* document commands used
+* identify security implications of the change
+
+---
+
+## 8.5 Optional Advanced Extensions
+
+### Advanced Lab Extensions
+
+* add a fourth VM for client/service-consumer testing
+* implement local DNS caching or authoritative DNS
+* deploy NFS and Samba cross-host storage workflows
+* build a small libvirt/KVM environment on a nested-capable host
+* integrate containerized monitoring tools
+* test WireGuard in a multi-node design
+* perform OpenSCAP baseline comparison before and after hardening
+* build a simple Git-based CI validation pipeline for Terraform, Ansible, and shell scripts
+
+---
+
+## 8.6 Assessment Recommendations
+
+### Practical Assessments
+
+* timed command execution labs
+* service restoration drills
+* written troubleshooting summaries
+* Git commit history review
+* automation code review
+* hardening verification checklist
+* end-of-course capstone recovery exercise
+
+### Certification Readiness Indicators
+
+A learner is ready for Linux+ exam preparation review when they can:
+
+* complete baseline administration tasks without reference material
+* diagnose common storage, service, and network faults
+* apply secure defaults to SSH, sudo, SELinux, and firewalls
+* use Ansible and shell scripting to automate repeated work
+* explain Linux+ terms and concepts in operational context
+* recover a broken lab host through logs, configuration review, and rebuild workflows
+
+---
+
+# Program Summary
+
+```text
+Linux+ Training Program
+│
+├── Objective Map
+├── Lab Architecture
+├── Progressive Module Exercises
+├── Gap Coverage Labs
+├── Capstone Scenarios
+├── Automation Integration
+├── Difficulty Progression
+└── Instructor Notes
+```
+
+## Coverage Statement
+
+This curriculum is designed to cover the full Linux+ XK0-006 objective set through:
+
+* structured objective mapping
+* reproducible lab infrastructure
+* progressive hands-on exercises
+* targeted gap coverage
+* integrated scenario labs
+* automation-first workflows
+* operational troubleshooting practice
+
+It is intended to function as a complete Linux training repository document for internal administrator development and certification readiness.

@@ -1,5 +1,19 @@
 # Linux+ XK0-006 Training Program - Section 2 — Lab Environment Architecture
 
+- [Linux+ XK0-006 Training Program - Section 2 — Lab Environment Architecture](#linux-xk0-006-training-program---section-2--lab-environment-architecture)
+  - [2.1 Design Goals](#21-design-goals)
+  - [2.2 Lab Architecture Diagram](#22-lab-architecture-diagram)
+  - [2.3 VM Design](#23-vm-design)
+  - [2.4 Network Topology](#24-network-topology)
+  - [2.5 Repository Structure](#25-repository-structure)
+  - [2.6 Required Host Tools](#26-required-host-tools)
+  - [2.7 Base Installation Steps](#27-base-installation-steps)
+  - [2.8 Terraform Infrastructure Baseline](#28-terraform-infrastructure-baseline)
+  - [2.9 Kickstart Workflow](#29-kickstart-workflow)
+  - [2.10 Ansible Workflow](#210-ansible-workflow)
+  - [2.11 Automation Workflow](#211-automation-workflow)
+  - [2.12 Baseline Validation Checklist](#212-baseline-validation-checklist)
+
 ## 2.1 Design Goals
 
 The lab environment supports full Linux+ XK0-006 coverage with repeatable provisioning and automation-first administration.
@@ -190,14 +204,14 @@ ssh -V
 
 ## 2.7 Base Installation Steps
 
-### 1. Clone the Repository
+### 2.7.1. Clone the Repository
 
 ```bash
 git clone https://github.com/TheSubtleArtist/myLinuxTraining
 cd myLinuxTraining
 ```
 
-### 2. Create Required Directories
+### 2.7.2. Create Required Directories
 
 ```bash
 mkdir -p automation/terraform
@@ -207,7 +221,7 @@ mkdir -p exercises
 mkdir -p docs
 ```
 
-### 3. Create `.gitignore`
+### 2.7.3. Create `.gitignore`
 
 ```gitignore
 # Terraform state
@@ -235,14 +249,14 @@ __pycache__/
 Thumbs.db
 ```
 
-### 4. Add VirtualBox to PATH
+### 2.7.4. Add VirtualBox to PATH
 
 ```powershell
 $env:Path += ";C:\Program Files\VirtualBox"
 VBoxManage --version
 ```
 
-### 5. Download Rocky Linux ISO
+### 2.7.5. Download Rocky Linux ISO
 
 Place the image at:
 
@@ -250,7 +264,7 @@ Place the image at:
 automation/terraform/iso/Rocky-9.7-x86_64-minimal.iso
 ```
 
-### 6. Create Host-Only Network
+### 2.7.6. Create Host-Only Network
 
 Use VirtualBox Network Manager:
 

@@ -1,5 +1,21 @@
 # Linux+ XK0-006 Training Program - Course Map
 
+- [Linux+ XK0-006 Training Program - Course Map](#linux-xk0-006-training-program---course-map)
+  - [Repository Purpose](#repository-purpose)
+- [Section 1 — Linux+ Objective Map](#section-1--linux-objective-map)
+  - [Training Module Overview](#training-module-overview)
+  - [Module 1 — Linux Foundations and System Architecture](#module-1--linux-foundations-and-system-architecture)
+  - [Module 2 — Device, Boot, and Kernel Management](#module-2--device-boot-and-kernel-management)
+  - [Module 3 — Storage, Filesystems, and Data Protection](#module-3--storage-filesystems-and-data-protection)
+  - [Module 4 — Networking and Host Connectivity](#module-4--networking-and-host-connectivity)
+  - [Module 5 — Files, Users, Permissions, and Process Control](#module-5--files-users-permissions-and-process-control)
+  - [Module 6 — Software, Services, and systemd Operations](#module-6--software-services-and-systemd-operations)
+  - [Module 7 — Security, Identity, and Compliance](#module-7--security-identity-and-compliance)
+  - [Module 8 — Containers and Virtualization](#module-8--containers-and-virtualization)
+  - [Module 9 — Automation, Git, Python, and AI-Assisted Administration](#module-9--automation-git-python-and-ai-assisted-administration)
+  - [Module 10 — Monitoring, Performance, and Troubleshooting](#module-10--monitoring-performance-and-troubleshooting)
+
+
 ## Repository Purpose
 
 This document defines a complete, hands-on Linux+ XK0-006 training curriculum for junior Linux administrators. It is structured for direct inclusion in a GitHub repository and is designed to support:
@@ -13,7 +29,7 @@ This document defines a complete, hands-on Linux+ XK0-006 training curriculum fo
 
 ---
 
-# Section 1 — Refined Linux+ Objective Map
+# Section 1 — Linux+ Objective Map
 
 ## Training Module Overview
 

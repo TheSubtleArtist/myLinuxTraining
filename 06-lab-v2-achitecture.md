@@ -104,7 +104,8 @@ The lab environment supports full Linux+ XK0-006 coverage with repeatable provis
 ### Host-Only Network Configuration
 
 ```text
-Adapter Name: vboxnet0
+Adapter Name: vboxnet0 // Note: Cannot be changed without editing the registry. 
+  use: VirtualBox Host-Only Ethernet Adapter #2
 IPv4 Address: 192.168.56.1
 Mask: 255.255.255.0
 DHCP: Disabled

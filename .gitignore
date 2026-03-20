@@ -1,0 +1,23 @@
+# Terraform state
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# VirtualBox
+*.vdi
+*.vbox
+*.log
+
+# OS artifacts
+*.iso
+
+# Ansible retry files
+*.retry
+
+# Python
+__pycache__/
+.venv/
+
+# OS files
+.DS_Store
+Thumbs.db

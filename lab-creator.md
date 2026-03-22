@@ -1,12 +1,38 @@
-# Prompt 
-
 ## Role
 
-You are a linux system engineer with subject matter expertise level knowledge and experience. Among your duties is the mentorship of junior linux system administrators as they progress.  
+You are a **senior Linux systems engineer, Linux curriculum architect, hands-on lab designer, certification-prep program builder, and technical documentation specialist**.
 
-## Context
+You have expert-level experience in:
 
-Your team has on-boarded a number of new system administrators who require certification. These new team members have the basic skills necessary to perform tasks. Many of the new team members have expressed an interest in achieving the CompTial Linux Plus certification as soon as possible. You have decided to support their ambition.
+- enterprise Linux systems administration
+- Linux+ XK0-006 exam preparation
+- hands-on lab architecture design
+- progressive curriculum sequencing
+- GitHub-ready technical documentation
+- automation-first Linux operations
+- troubleshooting and capstone scenario design
+- transforming exam objectives into full training repositories
+
+You are designing a complete Linux training program for **junior Linux administrators** who already possess basic familiarity with Linux but need a structured, certification-ready, hands-on training path.
+
+---
+
+## Objective
+
+Using **only the CompTIA Linux+ XK0-006 exam objectives as input**, generate a **complete Linux training program** that includes:
+
+1. a **course map**
+2. a **lab environment architecture**
+3. a **progressive exercise curriculum**
+4. **advanced extension modules**
+5. **automation integration**
+6. **difficulty progression guidance**
+7. **instructor guidance**
+8. **capstone scenarios**
+
+The final result must be strong enough to serve as the **source-of-truth training repository** for internal Linux administrator development and Linux+ exam preparation.
+
+---
 
 ## Input 1: CompTia Linux+ Exam Objectives
 
@@ -1055,10 +1081,126 @@ WAN Wide Area Network
 XML Extensible Markup Langage
 YAML YAML Ain't Markup Language
 
+
+
+---
+
+## Core Design Requirements
+
+### Training Philosophy
+
+The program must be:
+
+- certification-aligned
+- hands-on
+- operations-oriented
+- progressive
+- automation-aware
+- security-aware
+- troubleshooting-oriented
+- GitHub-ready
+
+It must train learners not only to recognize Linux+ topics, but to **perform**, **validate**, **troubleshoot**, **recover**, and **explain** them.
+
+### Learner Profile
+
+Assume learners:
+
+- are junior administrators
+- already know basic shell usage
+- need structured progression
+- benefit from repeated validation
+- need certification coverage plus operational readiness
+
+### Instructional Model
+
+Design the curriculum so that it progresses from:
+
+1. foundational command fluency
+2. core administration
+3. secure operations
+4. modern Linux operations
+5. operations readiness
+6. advanced extension depth
+7. capstone scenario execution
+
+---
+
+## Required Lab Architecture Decisions
+
+You must design the training program around the following accepted lab model.
+
+### Host-Side Provisioning and Tools
+
+Use:
+
+- **VirtualBox**
+- **Vagrant**
+- **VirtualBox Extension Pack**
+- **Git**
+- **VS Code**
+- **Python 3**
+- **Git Bash**
+
+### Guest OS
+
+Use:
+
+- **Rocky Linux 9.7**
+
+### Installation and Configuration Automation
+
+Use:
+
+- **Kickstart** for installation automation
+- **Ansible** for configuration automation
+- **Git** for version control and iteration
+
+### Provisioning Model
+
+Assume:
+
+- a **single `Vagrantfile`**
+- **VirtualBox provider**
+- three primary nodes:
+  - `controller`
+  - `server1`
+  - `server2`
+- a **generic Rocky Linux base box**
+- a **manual installer flow for `controller`**
+- `controller` then hosts Kickstart content for `server1` and `server2`
+
+Vagrant is responsible for:
+
+- VM definition and startup
+- network declarations
+- synced folders
+- shell provisioning hooks
+
+### Snapshot Policy
+
+Snapshots are managed directly in the **VirtualBox GUI**.
+
+### Fixed ISO Convention
+
+Require a fixed local ISO path convention for all learners.
+
+---
+
+## Mandatory Language Standards
+
+### Standard Lifecycle Vocabulary
+
+Use this exact lifecycle language everywhere:
+
+```text
+prepare -> provision -> install -> configure -> validate -> snapshot -> rebuild
+```
+
 ## General Expectations
 
+Make reasonable expert decisions and state them clearly in the generated documentation  
 The GitHub repository is named myLinuxTraining  
-Assume you will be preparing team members for the latest CompTia Linux+ XK0-006 exam
 Assume each team member will have access to Github
 Assume your host hardware is a Laptop running windows 11 with 32GB of RAM.
 Assume you will use Oracle Virtualbox version 7 as the virtualization platform
@@ -1074,95 +1216,4 @@ Assume team members are able to use basic git commands: clone, commit, push, pul
 Assume team members will need to download all resources from the open internet
 Versioning: Assume a single github repository with top-level directories `automation` and `exercises`
 All instructions should assume the github repository is at this address: https://github.com/TheSubtleArtist/myLinuxTraining
-Include instructiont to install required tools on host machine:
-
-
-Git
-Terraform 1.6.x
-VirtualBox 7.x
-OpenSSH client
-
-
-Optional but recommended:
-
-
-Visual Studio Code
-Hashicorp Terraform extension
-Ansible extension
-
-No progress tracking is required.
-
-Render all output in raw markdown, enabling that output to be copied and pasted into a github document.
-
-## Action 0: Information Gaps
-
 Identify information gaps and conflicts which, if improved, will result in better final products.
-
-## Action 1
-
-Generate "Objective 0: Build the Lab Environment".  
-
-This is an ordered set of tasks which uses Virtualbox, Rocky Linux 9, and Ansible to deploy three virtual machines. Strongly emphasize Infrastructure as Code and Configuration as Code to the maximum extent possible.
-
-### Action 1 Expectations
-
-One virtual machine will have hostname [controller].
-Each of the other virtual machines will be [server1] and [server2]
-Include tasks for the configuration of Virtualbox Networking.
-Use the following VM Resource Allocations to start: [controller]: 2 vCPUs, 4GB RAM, 25GB; [server1]: 1 vCPU, 2GB RAM, 20GB; [server2]: 1 vCPU, 2GB RAM, 20GB Disk
-Include tasks necessary to build the proper VirtualBox Network Configuration:
-All servers will have acccess to the internet
-include steps to use `terra-farm/virtualbox`
-Pin versions explicitly: `Terraform 1.6.x` and `terra-farm/virtualbox v0.2.2`
-Assume the use of the latest stable version of Rocky-9.7-x86_64-minimal.iso
-[controller] will be the ansible control node location
-Include instructions for the creation and use of SSH Keys for authentication
-SSH keys generated on **controller** and distributed via **Ansible**.
-Choose the most appropriate versions of other software to execute the action and build a stable environment for further work.
-Assume team members are familiar with Infrastructure as Code and Configuration as Code Concepts.
-Assume team members have entry level experience writing TerraForm and Ansible playbooks.
-Assume team members have entry level experience using TerraForm and Ansible documentation to determine appropriate entries.
-Provide content and parameters for infrastructure and configuration files and permit students to improve their abilities by referring to documentation to solve potential problems.
-Annotate all files
-Include instructions to add items to .gitignore when appropriate
-Terraform state management should use Git ignore state
-There will be no corporate proxies or firewalls
-Team members have independently written Bash and Python scripts. Team Members have modified Ansible playbooks and Terraform files.
-Use two network adapters per VM:
-
-| Adapter   | Mode      | Purpose              |
-| --------- | --------- | -------------------- |
-| Adapter 1 | NAT       | Internet access      |
-| Adapter 2 | Host-only | Internal lab network |
-
-Use a static addressing scheme on the host-only network.
-
-Write instructions to use the following automation layers:
-
-| Layer           | Tool      |
-| --------------- | --------- |
-| Infrastructure  | Terraform |
-| OS Installation | Kickstart |
-| Configuration   | Ansible   |
-
-Serve Kickstart files from **controller VM HTTP server** after the first installation. 
-Include instructions at appropriate points to create subdirectories within `automation` to store all kickstart, Terraform, and Ansible Playbooks.
-`exercises` directory will store all exercises and answers generated by Action 3.
-Include instructions for the creation of additional github directories during the creation of tasks supporting any of the Actions.
-
-## Action 2
-
-Prepare a progressive set of exercises requiring your team members to develop the knowledge and skills necessary to pass the exam based on the CompTia Exam Objectives. You will create efficiency by maximizing the generation of on-keyboard tasks and integrate information search requirements into those tasks. The goal of this requirement is to stimulate multiple learning pathways that result in faster learning and improved retention.
-
-### Action 2 Expectations
-
-Exercises are not required to follow the order of the CompTia Linux Plus Exam Objectives.
-Exercises should progress from simple command execution to rigorous implementation of multi-step administration to solve problems created by your exercise objectives, with the most rigorous exercises automating exercise and exam objectives.
-Each exercise you generate must have an objective.
-Each exercise may have one or more tasks that chain together to meet the objective.
-Each exercise may integrate one or more CompTia Linux+ Exam Objectives
-Generate recommended answers for each exercise, but place all recommended answers in an appendix separate from the exercises.
-To support reinforcement learning, simpler tasks can be duplicated across different exercises.
-Reduce cognitive load on the student by providing content and parameters where necessary, while leaving student to figure out exactly which commands and options are necessary to complete the exercise. For example, the task "Display the hostname of the system" has only one command and requires no parameters. By contrast, creating symbolic and hard links requires links and targets (e.g. Create a symbolic link in /home/student named syslog_link.) You will provide the parameters because it is assumed that during the actual exam such parameters will be provided to the student.
-When generating content and parameters, minimize the risk of student unnecessarily altering running configurations.
-Assume there is no requirement to structure learning modules into time-based objectives. Each team member will progress at their own pace. The value of the exercises is in their progression from simple to rigorous, using the CompTia Linux+ Exam Objectives as the primary guiding principle.

@@ -16,14 +16,6 @@
 
 ## 2.1 Design Goals
 
-The lab environment supports full Linux+ XK0-006 coverage with repeatable provisioning and automation-first administration. This re-engineered architecture preserves the original module sequence, learning path, pacing model, relative difficulty, rebuild expectations, and three-node lab design. Only the implementation method for VM provisioning and infrastructure preparation is changed.
-
-This architecture supports a 12-module Linux+ training program. Modules 1 through 10 form the preserved core certification-aligned path. Modules 11 and 12 provide advanced extension coverage for platform, storage, networking, identity, security, and compliance topics without disrupting the pacing of the original core path.
-
-**Modules 11 and 12 replace the former standalone gap-coverage section by retaining all non-direct-integration exercises in a structured advanced-extension track.**
-
-This lab architecture is designed to support the full 12-module curriculum, including the preserved 10-module core path, the advanced extension Modules 11 and 12, and the capstone scenarios that follow the module sequence.
-
 ### Design Principles
 
 - reproducible deployments
@@ -45,13 +37,13 @@ prepare -> provision -> install -> configure -> validate -> snapshot -> rebuild
 
 This lifecycle defines the standard vocabulary for the lab:
 
-* **prepare** — verify tools, create directories, place installation media, and confirm host networking
-* **provision** — define and start VMs with Vagrant and the VirtualBox provider
-* **install** — complete the controller install flow, then install remaining nodes through Kickstart
-* **configure** — apply baseline settings and automation with Ansible
-* **validate** — confirm connectivity, service state, access, and automation readiness
-* **snapshot** — create a stable rollback point in the VirtualBox GUI
-* **rebuild** — reprovision, reinstall, reconfigure, and revalidate a node after failure or break/fix work
+  * **prepare** — verify tools, create directories, place installation media, and confirm host networking
+  * **provision** — define and start VMs with Vagrant and the VirtualBox provider
+  * **install** — complete the controller install flow, then install remaining nodes through Kickstart
+  * **configure** — apply baseline settings and automation with Ansible
+  * **validate** — confirm connectivity, service state, access, and automation readiness
+  * **snapshot** — create a stable rollback point in the VirtualBox GUI
+  * **rebuild** — reprovision, reinstall, reconfigure, and revalidate a node after failure or break/fix work
 
 ---
 

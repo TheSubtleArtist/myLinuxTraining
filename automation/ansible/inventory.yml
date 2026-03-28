@@ -1,15 +1,13 @@
----
+all:
+  children:
+    controller:
+      hosts:
+        controller:
+          ansible_host: 192.168.56.10
 
-controller ansible_host=192.168.56.10
-server1 ansible_host=192.168.56.11
-server2 ansible_host=192.168.56.12
-
-[controller]
-controller
-
-[servers]
-server1
-server2
-
-[all:vars]
-ansible_user=student
+    servers:
+      hosts:
+        server1:
+          ansible_host: 192.168.56.11
+        server2:
+          ansible_host: 192.168.56.12

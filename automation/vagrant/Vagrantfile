@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
               echo "Controller shell provisioning hook executed"
               sudo dnf install -y ansible
               git clone https://github.com/TheSubtleArtist/myLinuxTraining.git
-              cd myLinuxTraining/automation/ansible
+              cd /myLinuxTraining/automation/ansible
               ansible-playbook -i inventory provision.yml
       SHELL
     end

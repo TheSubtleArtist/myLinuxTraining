@@ -46,6 +46,12 @@
         generate_ssh_key: yes
         ssh_key_bits: 2048
         ssh_key_file: ~/.ssh/id_rsa
+    - name: Pull the latest changes from the repository
+      git:
+        repo: https://github.com/TheSubtleArtist/myLinuxTraining.git
+        dest: /home/student/myLinuxTraining
+        update: yes
+
 
 - name: Set up Servers
   hosts: servers

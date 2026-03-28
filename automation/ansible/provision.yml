@@ -36,17 +36,6 @@
         state: present
         update_cache: yes
         
-    - name: Enable CRB repository
-      community.general.dnf_config_manager:
-        name: crb
-        state: enabled
-
-    - name: Enable and start Apache HTTP Server
-      service:
-        name: httpd
-        state: started
-        enabled: yes
-    
     - name: Create the student user and add to wheel group
       user:
         name: student

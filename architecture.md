@@ -61,7 +61,7 @@ This lifecycle defines the standard vocabulary for the lab:
                       Host-Only Network: 192.168.56.0/24
 ```
 
-The architecture uses a three-node Rocky Linux lab on VirtualBox. Vagrant manages VM definition and startup with the VirtualBox provider. The `controller` node serves as the Ansible control node and the Kickstart web server. `server1` and `server2` act as managed targets for storage, networking, security, services, monitoring, and troubleshooting exercises.
+The architecture uses a three-node Rocky Linux lab on VirtualBox. Vagrant manages VM definition and startup with the VirtualBox provider. The `controller` node also serves as the Ansible control node. Hosts `server1` and `server2` act as managed targets for storage, networking, security, services, monitoring, and troubleshooting exercises.
 
 Capstone scenarios occur after the module sequence and use this same environment for fault injection, recovery, validation, and rebuild workflows.
 
@@ -73,7 +73,7 @@ Capstone scenarios occur after the module sequence and use this same environment
 
 | VM         | Primary Role         | Secondary Role                                           |
 | ---------- | -------------------- | -------------------------------------------------------- |
-| controller | Ansible control node | web server for Kickstart, Git workspace, package testing |
+| controller | Ansible control node | Git workspace, package testing                           |
 | server1    | managed server       | storage, service, container, security lab target         |
 | server2    | managed server       | network, troubleshooting, cluster, backup lab target     |
 
@@ -81,7 +81,7 @@ Capstone scenarios occur after the module sequence and use this same environment
 
 | VM         | vCPU | RAM  | Disk                      | Notes                                          |
 | ---------- | ---- | ---- | ------------------------- | ---------------------------------------------- |
-| controller | 2    | 4 GB | 40 GB                     | automation tooling, HTTP server, Git workspace |
+| controller | 2    | 4 GB | 40 GB                     | automation tooling, Git workspace              |
 | server1    | 2    | 3 GB | 30 GB + optional lab disk | storage, container, security labs              |
 | server2    | 2    | 3 GB | 30 GB + optional lab disk | service, network, troubleshooting labs         |
 
@@ -153,12 +153,6 @@ myLinuxTraining/
 │   ├── iso/
 │   │   └── Rocky-9.7-x86_64-minimal.iso
 │   │
-│   ├── kickstart/
-│   │   ├── controller.ks
-│   │   ├── server.ks
-│   │   ├── post-install/
-│   │   └── templates/
-│   │
 │   ├── ansible/
 │   │   ├── inventory.ini
 │   │   ├── ansible.cfg
@@ -202,16 +196,6 @@ myLinuxTraining/
 ├── README.md
 └── LICENSE
 ```
-
-### Fixed Local ISO Path Standard
-
-
-
-```text
-myLinuxTraining/automation/iso/Rocky-9.7-x86_64-minimal.iso
-```
-
----
 
 ## 2.6 Required Host Tools
 
@@ -294,14 +278,6 @@ __pycache__/
 Thumbs.db
 ```
 
-### 2.7.4 Place the Rocky Linux ISO
-
-Copy the Rocky Linux 9.7 installation media to:
-
-```text
-automation/iso/Rocky-9.7-x86_64-minimal.iso
-```
-
 ### 2.7.5 Verify the Host-Only Adapter
 
 Confirm that the selected VirtualBox host-only adapter matches the accepted lab standard:
@@ -311,10 +287,6 @@ IPv4 Address: 192.168.56.1
 Mask: 255.255.255.0
 DHCP: Disabled
 ```
-
-### 2.7.6 Verify Vagrant and VirtualBox Integration
-
-From the repository root, confirm that Vagrant and VirtualBox are available and compatible before defining the lab.
 
 ---
 
@@ -327,8 +299,6 @@ The lab uses **Vagrant with the VirtualBox provider** as the only provisioning p
 * synced folders
 * shell provisioning hooks
 
-Kickstart remains responsible for installation automation, and Ansible remains responsible for configuration automation.
-
 ### Provisioning Goals
 
 * create a repeatable three-node topology
@@ -336,92 +306,6 @@ Kickstart remains responsible for installation automation, and Ansible remains r
 * separate VM provisioning from guest configuration
 * preserve rebuild and rollback capability
 * support repeatable baseline creation before destructive labs
-
-### Single `Vagrantfile` Standard
-
-Use one `Vagrantfile` defining:
-
-* `controller`
-* `server1`
-* `server2`
-
-### Example Variable File
-
-```bash
-ISO_PATH="./automation/iso/Rocky-9.7-x86_64-minimal.iso"
-HOSTONLY_IP="192.168.56.1"
-CONTROLLER_NAME="controller"
-SERVER1_NAME="server1"
-SERVER2_NAME="server2"
-CONTROLLER_RAM=4096
-SERVER_RAM=3072
-CPU_COUNT=2
-CONTROLLER_DISK_MB=40960
-SERVER_DISK_MB=30720
-SYNCED_FOLDER_HOST="./"
-SYNCED_FOLDER_GUEST="/vagrant"
-```
-
-### Example `Vagrantfile` Structure
-
-```ruby
-Vagrant.configure("2") do |config|
-  config.vm.box = "generic/rocky9"
-  config.vm.synced_folder ".", "/vagrant", disabled: false
-
-  config.vm.provider "virtualbox" do |vb|
-    vb.gui = false
-    vb.cpus = 2
-  end
-
-  config.vm.define "controller" do |controller|
-    controller.vm.hostname = "controller"
-    controller.vm.network "private_network", ip: "192.168.56.10"
-    controller.vm.network "public_network", bridge: nil
-    controller.vm.provider "virtualbox" do |vb|
-      vb.name = "controller"
-      vb.memory = 4096
-    end
-    controller.vm.provision "shell", inline: <<-SHELL
-      echo "Controller shell provisioning hook executed."
-    SHELL
-  end
-
-  config.vm.define "server1" do |server1|
-    server1.vm.hostname = "server1"
-    server1.vm.network "private_network", ip: "192.168.56.11"
-    server1.vm.network "public_network", bridge: nil
-    server1.vm.provider "virtualbox" do |vb|
-      vb.name = "server1"
-      vb.memory = 3072
-    end
-    server1.vm.provision "shell", inline: <<-SHELL
-      echo "Server1 shell provisioning hook executed."
-    SHELL
-  end
-
-  config.vm.define "server2" do |server2|
-    server2.vm.hostname = "server2"
-    server2.vm.network "private_network", ip: "192.168.56.12"
-    server2.vm.network "public_network", bridge: nil
-    server2.vm.provider "virtualbox" do |vb|
-      vb.name = "server2"
-      vb.memory = 3072
-    end
-    server2.vm.provision "shell", inline: <<-SHELL
-      echo "Server2 shell provisioning hook executed."
-    SHELL
-  end
-end
-```
-
-### Provisioning Workflow
-
-```bash
-cd automation/vagrant
-vagrant up
-vagrant status
-```
 
 ### Provisioning Responsibilities
 
@@ -431,23 +315,19 @@ vagrant status
 * the remaining nodes are installed through the accepted Kickstart workflow
 * configuration and state convergence are handled by Ansible after installation
 
-### Controller Installation Standard
+### Single `Vagrantfile` Standard
 
-The curriculum assumes a generic Rocky Linux base box, followed by a manual installer flow for `controller`. After `controller` is established, it serves Kickstart content for `server1` and `server2`.
+Use one `Vagrantfile` defining:
 
-This preserves the controller-first build strategy:
+* `controller`
+* `server1`
+* `server2`
 
-1. define the VMs with Vagrant
-2. establish the controller node
-3. serve Kickstart from controller
-4. install remaining nodes
-5. configure all nodes with Ansible
+View the [Vagrant File](https://github.com/TheSubtleArtist/myLinuxTraining/blob/main/automation/vagrant/Vagrantfile)
 
 ---
 
 ## 2.10 Ansible Workflow
-
-
 
 ### Configuration Scope
 
@@ -462,17 +342,11 @@ Ansible is responsible for:
 
 ---
 
-[Inventory Playbook]()
-
-```
-
-## 2.11 Automation Workflow
+### Automation Workflow
 
 ```text
 Vagrant
   -> defines and starts VM infrastructure through the VirtualBox provider
-Kickstart
-  -> installs Rocky Linux with predefined settings
 Ansible
   -> configures users, keys, packages, services, and lab roles
 Git
@@ -485,11 +359,12 @@ Git
 | --------- | ------------------------- | --------------------------------------- |
 | prepare   | Git, host tools           | repository, ISO, verified prerequisites |
 | provision | Vagrant                   | three-node VM topology                  |
-| install   | Kickstart                 | repeatable Rocky Linux installations    |
 | configure | Ansible                   | baseline packages, SSH keys, lab roles  |
 | validate  | Bash/Ansible              | host reachability and service checks    |
 | snapshot  | VirtualBox GUI            | stable rollback point                   |
 | rebuild   | Vagrant/Kickstart/Ansible | recovered and revalidated node          |
+
+---
 
 ### Operational Expectations
 
@@ -503,15 +378,16 @@ The accepted automation tool stack is identical throughout the program:
 
 * VirtualBox
 * Vagrant
-* Kickstart
 * Ansible
 * Git
 
 ---
 
+[Inventory Playbook](https://github.com/TheSubtleArtist/myLinuxTraining/blob/main/automation/ansible/inventory.yml)
+
 ## 2.12 Baseline Validation Checklist
 
-Run the following checks after provisioning, installation, and configuration:
+Run the following checks after provisioning and configuration:
 
 ```bash
 hostnamectl

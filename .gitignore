@@ -1,14 +1,13 @@
-# Terraform state
-*.tfstate
-*.tfstate.*
-.terraform/
+# Vagrant
+.vagrant/
 
 # VirtualBox
 *.vdi
 *.vbox
+*.vbox-prev
 *.log
 
-# OS artifacts
+# ISO
 *.iso
 
 # Ansible retry files
@@ -17,6 +16,10 @@
 # Python
 __pycache__/
 .venv/
+
+# Temporary files
+*.tmp
+*.out
 
 # OS files
 .DS_Store

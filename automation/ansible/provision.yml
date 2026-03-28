@@ -1,0 +1,83 @@
+---
+
+- name: Provision All Hosts
+  hosts: all
+  become: true
+  tasks:
+    - name: Provision 'student' identity on all hosts
+      user:
+        name: student
+        state: present
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        create_home: yes
+
+- name: Provision Controller
+  hosts: controller
+  become: true
+  tasks:
+    - name: Generate ssh key for `student'
+      become_user: student
+      openssh_keypair:
+        path: /home/student/.ssh/id_rsa
+        type: rsa
+        size: 2048 
+        state: present
+
+    - name: Update the system and install necessary packages
+      dnf:
+        name:
+          - epel-release
+          - ansible-core
+          - git
+          - httpd
+          - python3-pip
+        state: present
+        update_cache: yes
+        
+    - name: Enable CRB repository
+      community.general.dnf_config_manager:
+        name: crb
+        state: enabled
+
+    - name: Enable and start Apache HTTP Server
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    
+    - name: Create the student user and add to wheel group
+      user:
+        name: student
+        state: present
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: ~/.ssh/id_rsa
+
+- name: Set up Servers
+  hosts: servers
+  become: true
+  tasks:
+    - name: Update the system and install necessary packages
+      dnf:
+        name:
+          - epel-release
+          - python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Fetch the public key from the controller and add it to the authorized_keys of the student user
+      delegate_to: controller
+      become: yes
+      slurp:
+        src: /home/student/.ssh/id_rsa.pub
+      register: public_key
+    - name: install public key on servers
+      authorized_key:
+        user: student
+        state: present
+        key: "{{ public_key['content'] | b64decode }}"

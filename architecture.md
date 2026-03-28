@@ -9,9 +9,7 @@
   - [2.6 Required Host Tools](#26-required-host-tools)
   - [2.7 Base Installation Steps](#27-base-installation-steps)
   - [2.8 Vagrant Provisioning Baseline](#28-vagrant-provisioning-baseline)
-  - [2.9 Kickstart Workflow](#29-kickstart-workflow)
   - [2.10 Ansible Workflow](#210-ansible-workflow)
-  - [2.11 Automation Workflow](#211-automation-workflow)
   - [2.12 Baseline Validation Checklist](#212-baseline-validation-checklist)
 
 ## 2.1 Design Goals
@@ -137,9 +135,6 @@ Mask: 255.255.255.0
 DHCP: Disabled
 Purpose: lab host-only segment for 192.168.56.0/24
 ```
-
-This guidance replaces brittle adapter naming assumptions and preserves the existing network model without depending on a specific adapter number or display name.
-
 ---
 
 ## 2.5 Repository Structure
@@ -210,13 +205,11 @@ myLinuxTraining/
 
 ### Fixed Local ISO Path Standard
 
-All learners will use the same repository-relative ISO location:
+
 
 ```text
 myLinuxTraining/automation/iso/Rocky-9.7-x86_64-minimal.iso
 ```
-
-This repository structure supports the full 12-module curriculum and capstones, and removes the former standalone gap-coverage layout in favor of the advanced-extension modules.
 
 ---
 
@@ -268,21 +261,7 @@ The accepted tool stack for the program is consistent throughout the document se
 
 ### 2.7.1 Clone the Repository
 
-```bash
-git clone https://github.com/TheSubtleArtist/myLinuxTraining
-cd myLinuxTraining
-```
-
 ### 2.7.2 Create Required Directories
-
-```bash
-mkdir -p automation/vagrant
-mkdir -p automation/iso
-mkdir -p automation/ansible
-mkdir -p automation/kickstart
-mkdir -p exercises
-mkdir -p docs
-```
 
 ### 2.7.3 Create `.gitignore`
 
@@ -369,7 +348,6 @@ Use one `Vagrantfile` defining:
 ### Example Variable File
 
 ```bash
-LAB_NAME_PREFIX=linuxplus
 ISO_PATH="./automation/iso/Rocky-9.7-x86_64-minimal.iso"
 HOSTONLY_IP="192.168.56.1"
 CONTROLLER_NAME="controller"
@@ -467,106 +445,26 @@ This preserves the controller-first build strategy:
 
 ---
 
-## 2.9 Kickstart Workflow
-
-### Controller Preparation
-
-Install required tooling on `controller`:
-
-```bash
-sudo dnf update -y
-sudo dnf config-manager --set-enabled crb
-sudo dnf install -y epel-release
-sudo dnf install -y ansible-core git httpd python3-pip
-sudo systemctl enable --now httpd
-sudo mkdir -p /var/www/html/kickstart
-sudo chmod -R 755 /var/www/html
-```
-
-### Kickstart Delivery
-
-Copy Kickstart files to the web root:
-
-```bash
-sudo cp automation/kickstart/*.ks /var/www/html/kickstart/
-```
-
-### Automated Server Installation
-
-Boot `server1` and `server2` with:
-
-```text
-inst.ks=http://192.168.56.10/kickstart/server.ks
-```
-
-### Workflow Notes
-
-* `controller` must be reachable at `192.168.56.10`
-* the web service must be enabled before server installation begins
-* server installations must use the accepted Kickstart URL pattern
-* Kickstart content must remain version-controlled in the repository
-
-Kickstart remains the accepted installation automation method across the full document set.
-
----
-
 ## 2.10 Ansible Workflow
 
-### Inventory
 
-```ini
-[controller]
-controller ansible_host=192.168.56.10
-
-[servers]
-server1 ansible_host=192.168.56.11
-server2 ansible_host=192.168.56.12
-
-[all:vars]
-ansible_user=student
-```
-
-### SSH Key Bootstrap
-
-Generate keys on `controller`:
-
-```bash
-ssh-keygen
-```
-
-### Playbook to Distribute Keys
-
-```yaml
----
-- hosts: servers
-  tasks:
-    - name: Install SSH public key
-      authorized_key:
-        user: student
-        state: present
-        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-```
-
-Run the playbook:
-
-```bash
-ansible-playbook -i inventory.ini distribute_keys.yml --ask-pass
-```
 
 ### Configuration Scope
 
-Ansible remains responsible for:
+Ansible is responsible for:
 
-* SSH key distribution
+* SSH key generation and distribution
 * baseline package installation
 * service enablement
 * host configuration standardization
 * repeatable role-driven configuration
 * post-rebuild recovery
 
-Ansible remains the accepted configuration automation method across the full document set.
-
 ---
+
+[Inventory Playbook]()
+
+```
 
 ## 2.11 Automation Workflow
 

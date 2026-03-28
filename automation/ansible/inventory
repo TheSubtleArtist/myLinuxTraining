@@ -1,9 +1,0 @@
----
-
-[controller]
-controller ansible_host=192.168.56.10
-
-[servers]
-server1 ansible_host=192.168.56.11
-server2 ansible_host=192.168.56.12
-

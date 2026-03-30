@@ -4,6 +4,14 @@
   hosts: all
   become: true
   tasks:
+    - name: Provision 'ansible' identity on all hosts
+      user:
+        name: ansible
+        state: present
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        create_home: yes
     - name: Provision 'student' identity on all hosts
       user:
         name: student
@@ -13,12 +21,13 @@
         append: yes
         create_home: yes
 
+
 - name: Provision Controller
   hosts: controller
   become: true
   tasks:
     - name: Generate ssh key for `student'
-      become_user: student
+      become: yes
       openssh_keypair:
         path: /home/student/.ssh/id_rsa
         type: rsa

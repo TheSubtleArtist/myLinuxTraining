@@ -27,16 +27,16 @@
       dnf:
         name:
           - lsb_release
+          - ansible
+          - python3-pip
         state: present
         update_cache: yes
         
-- name: Provision All Hosts
-  hosts: all
+- name: Provision Managed Hosts
+  hosts: servers
   become: true
   tasks:
-    - name: Validate student ssh directory
-      file: /home/student/.ssh state=directory owner=student group=student mode=0700
-    - name: Provision 'ansible' identity on all hosts
+    - name: Provision 'ansible' identity
       user:
         name: ansible
         state: present
@@ -44,7 +44,7 @@
         groups: wheel
         append: yes
         create_home: yes
-    - name: Provision 'student' identity on all hosts
+    - name: Provision 'student' identity
       user:
         name: student
         state: present
@@ -52,17 +52,13 @@
         groups: wheel
         append: yes
         create_home: yes
-    - name: Distribute the public key to all hosts
+    - name: Validate student ssh directory
+      file: /home/student/.ssh state=directory owner=student group=student mode=0700
+    - name: Distribute the public
       ansible.builtin.authorized_key:
         user: student
         state: present
         key: "{{ hostvars['controller']['student_pubkey']['content'] | b64decode }}"
-    - name: Ensure the private key has correct permission
-      file:
-        path: /home/student/.ssh/id_rsa
-        mode: '0600'
-        owner: student
-        group: student
     - name: Install packages
       dnf:
         name:

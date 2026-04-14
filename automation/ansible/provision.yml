@@ -8,7 +8,7 @@
       ansible.builtin.user:
         name: student
         generate_ssh_key: yes
-        key_type: ed25519
+        key_type: rsa
         ssh_key_bits: 2048
         ssh_key_file: /home/student/.ssh/id_rsa
         ssh_key_passphrase: ""
@@ -16,13 +16,17 @@
     - name: Ensure the private key has correct permission
       ansible.builtin.file:
         path: /home/student/.ssh/id_rsa
-        mode: '0755'
+        mode: '0600'
         owner: student
         group: student
+    - name: Read student's public key
+      ansible.builtin.slurp:
+        src: /home/student/.ssh/id_rsa.pub
+      register: student_pubkey
     - name: Install Controller Packages
       dnf:
         name:
-          - lsb-release
+          - lsb_release
         state: present
         update_cache: yes
         
@@ -47,10 +51,10 @@
         append: yes
         create_home: yes
     - name: Distribute the public key to all hosts
-      authorized_key:
+      ansible.builtin.authorized_key:
         user: student
         state: present
-        key: "{{ lookup('file', '/home/student/.ssh/id_rsa.pub') }}"
+        key: "{{ hostvars['controller']['student_pubkey']['content'] | b64decode }}"
     - name: Ensure the private key has correct permission
       file:
         path: /home/student/.ssh/id_rsa

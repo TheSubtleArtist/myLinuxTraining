@@ -43,7 +43,6 @@
         shell: /bin/bash
         groups: wheel
         append: yes
-        create_home: yes
     - name: Provision 'student' identity
       user:
         name: student
@@ -51,7 +50,6 @@
         shell: /bin/bash
         groups: wheel
         append: yes
-        create_home: yes
     - name: Validate student ssh directory
       file: /home/student/.ssh state=directory owner=student group=student mode=0700
     - name: Distribute the public

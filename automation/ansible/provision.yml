@@ -19,20 +19,13 @@
         mode: '0755'
         owner: student
         group: student
-        
-- name: Set up Servers
-  hosts: servers
-  become: true
-  tasks:
-    - name: Update the system and install necessary packages
+    - name: Install Controller Packages
       dnf:
         name:
-          - epel-release
-          - python3-pip
+          - lsb-release
         state: present
         update_cache: yes
-  
-
+        
 - name: Provision All Hosts
   hosts: all
   become: true
@@ -58,3 +51,16 @@
         user: student
         state: present
         key: "{{ lookup('file', '/home/student/.ssh/id_rsa.pub') }}"
+    - name: Ensure the private key has correct permission
+      file:
+        path: /home/student/.ssh/id_rsa
+        mode: '0755'
+        owner: student
+        group: student
+    - name: Install packages
+      dnf:
+        name:
+          - ansible
+          - python3-pip
+        state: present
+        update_cache: yes

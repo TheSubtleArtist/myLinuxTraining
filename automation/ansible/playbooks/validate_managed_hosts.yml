@@ -1,0 +1,89 @@
+- name: Validate managed hosts
+  hosts: servers
+  become: true
+  gather_facts: true
+
+  vars:
+    student_public_key: "{{ lookup('file', '/home/student/.ssh/id_rsa.pub') }}"
+
+  tasks:
+    - name: Verify student user exists
+      ansible.builtin.command: id student
+      register: student_user_check
+      changed_when: false
+      failed_when: student_user_check.rc != 0
+
+    - name: Verify ansible user exists
+      ansible.builtin.command: id ansible
+      register: ansible_user_check
+      changed_when: false
+      failed_when: ansible_user_check.rc != 0
+
+    - name: Verify student .ssh directory exists
+      ansible.builtin.stat:
+        path: /home/student/.ssh
+      register: student_ssh_dir
+
+    - name: Assert student .ssh directory is correct
+      ansible.builtin.assert:
+        that:
+          - student_ssh_dir.stat.exists
+          - student_ssh_dir.stat.isdir
+          - student_ssh_dir.stat.pw_name == 'student'
+          - student_ssh_dir.stat.gr_name == 'student'
+          - student_ssh_dir.stat.mode == '0700'
+        fail_msg: ".ssh directory is missing or incorrect on {{ inventory_hostname }}"
+        success_msg: ".ssh directory is correct on {{ inventory_hostname }}"
+
+    - name: Verify authorized_keys exists
+      ansible.builtin.stat:
+        path: /home/student/.ssh/authorized_keys
+      register: student_authorized_keys
+
+    - name: Assert authorized_keys file is present
+      ansible.builtin.assert:
+        that:
+          - student_authorized_keys.stat.exists
+          - student_authorized_keys.stat.isreg
+        fail_msg: "authorized_keys is missing on {{ inventory_hostname }}"
+        success_msg: "authorized_keys exists on {{ inventory_hostname }}"
+
+    - name: Read authorized_keys contents
+      ansible.builtin.slurp:
+        src: /home/student/.ssh/authorized_keys
+      register: authorized_keys_content
+
+    - name: Assert controller public key is installed
+      ansible.builtin.assert:
+        that:
+          - student_public_key in (authorized_keys_content.content | b64decode)
+        fail_msg: "Controller public key is not present in authorized_keys on {{ inventory_hostname }}"
+        success_msg: "Controller public key is present on {{ inventory_hostname }}"
+
+    - name: Gather installed package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert required baseline packages are installed
+      ansible.builtin.assert:
+        that:
+          - "'python3-pip' in ansible_facts.packages"
+        fail_msg: "Required baseline packages are missing on {{ inventory_hostname }}"
+        success_msg: "Required baseline packages are installed on {{ inventory_hostname }}"
+
+    - name: Assert host-only IP matches expected value
+      ansible.builtin.assert:
+        that:
+          - ansible_host == expected_host_only_ip
+        fail_msg: "Inventory IP does not match expected IP for {{ inventory_hostname }}"
+        success_msg: "Inventory IP matches expected IP for {{ inventory_hostname }}"
+      vars:
+        expected_host_only_ip: >-
+          {{
+            '192.168.56.11' if inventory_hostname == 'server1'
+            else '192.168.56.12'
+          }}
+
+    - name: Report validation summary
+      ansible.builtin.debug:
+        msg: "Validation checks passed on {{ inventory_hostname }}"

@@ -1,0 +1,45 @@
+---
+
+- name: Configure managed hosts
+  hosts: servers
+  become: true
+  vars:
+    student_public_key: "{{ lookup('file', '/home/student/.ssh/id_rsa.pub') }}"
+  tasks:
+    - name: Ensure ansible user exists
+      ansible.builtin.user:
+        name: ansible
+        state: present
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        create_home: yes
+    - name: Ensure 'student' user exists
+      ansible.builtin.user:
+        name: student
+        state: present
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        create_home: yes
+    - name: Ensure student .ssh directory exists
+      ansible.builtin.file:
+        path: /home/student/.ssh
+        state: directory
+        owner: student
+        group: student
+        mode: 0700
+    - name: Install controller public key for student
+      ansible.posix.authorized_key:
+        user: student
+        state: present
+        key: "{{ student_public_key }}"
+    - name: Install baseline packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop:
+        - python3
+        - python3-pip
+

@@ -1,0 +1,13 @@
+all:
+  vars:
+    ansible_user: vagrant
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    ansible_ssh_private_key_file: /home/vagrant/.ssh/id_rsa
+
+  children:
+    servers:
+      hosts:
+        server1:
+          ansible_host: 192.168.56.11
+        server2:
+          ansible_host: 192.168.56.12

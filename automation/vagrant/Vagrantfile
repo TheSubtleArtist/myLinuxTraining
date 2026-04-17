@@ -5,23 +5,8 @@
 # VARIABLES #
 #############
 
-ISO_PATH="./automation/iso/Rocky-9.7-x86_64-minimal.iso"
 BOX_IMAGE="generic/rocky9"
-HOSTONLY_IP="192.168.56.1"
-CONTROLLER_NAME="controller"
-CONTROLLER_IP="192.168.56.10"
-SERVER1_NAME="server1"
-SERVER1_IP="192.168.56.11"
-SERVER2_NAME="server2"
-SERVER2_IP="192.168.56.12"
-BRIDGE_INTERFACE="MediaTek MT7921 Wi-Fi 6 802.11ax PCIe Adapter"
-CONTROLLER_RAM=4096
-SERVER_RAM=3072
-CPU_COUNT=2
-CONTROLLER_DISK_MB=40960
-SERVER_DISK_MB=30720
-SYNCED_FOLDER_HOST="./"
-SYNCED_FOLDER_GUEST="/vagrant"
+HOSTONLY_NAME="VirtualBox Host-Only Ethernet Adapter"
 
 Vagrant.configure("2") do |config|
 
@@ -30,49 +15,52 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
      vb.gui = false
-     vb.cpus = CPU_COUNT
+     vb.cpus = 2
    end
+   config.vm.provision "shell", inline: <<-SHELL
+      echo "Global shell provisioning hook executing"
+   SHELL
 
-    config.vm.define "server1" do |server1|
-      server1.vm.hostname = SERVER1_NAME
-      server1.vm.network "private_network", ip: SERVER1_IP
-      server1.vm.network "public_network", bridge: BRIDGE_INTERFACE
-      server1.vm.provider "virtualbox" do |vb|
-                vb.name=SERVER1_NAME
-                vb.memory = SERVER_RAM
+    servers = [
+    { name: "server1", ip: "192.168.56.11", memory: 3072, disk_gb: 30 },
+    { name: "server2", ip: "192.168.56.12", memory: 3072, disk_gb: 30 }
+    ]
+  servers.each do |srv|
+    config.vm.define srv[:name] do |node|
+      node.vm.hostname = srv[:name]
+      node.vm.network "private_network", ip: srv[:ip], name: HOSTONLY_NAME
+      node.vm.provider "virtualbox" do |vb|
+                vb.name=srv[:name]
+                vb.memory = srv[:memory]
       end
-      server1.vm.provision "shell", inline: <<-SHELL
-              echo "Server1 shell provisioning hook executed"
+      node.vm.provision "shell", inline: <<-SHELL
+              echo "Server shell provisioning hook executed"
+              install -d -m 700 -o vagrant -g vagrant /home/vagrant/.ssh
+              PUBKEY="/vagrant/automation/vagrant/bootstrap-keys/bootstrap_id_rsa.pub"
+              grep -qxF "$(cat ${PUBKEY})" /home/vagrant/.ssh/authorized_keys || cat ${PUBKEY} >> /home/vagrant/.ssh/authorized_keys
+              chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+              chmod 600 /home/vagrant/.ssh/authorized_keys
+              echo "#{srv[:name]} shell provisioning hook executed"
       SHELL
     end
-
-    config.vm.define "server2" do |server2|
-      server2.vm.hostname = SERVER2_NAME
-      server2.vm.network "private_network", ip: SERVER2_IP
-      server2.vm.network "public_network", bridge: BRIDGE_INTERFACE
-      server2.vm.provider "virtualbox" do |vb|
-                vb.name=SERVER2_NAME
-                vb.memory = SERVER_RAM
-      end
-      server2.vm.provision "shell", inline: <<-SHELL
-              echo "Server2 shell provisioning hook executed"
-      SHELL
-    end
+  end
 
    config.vm.define "controller" do |controller|
-      controller.vm.hostname = CONTROLLER_NAME
-      controller.vm.network "private_network", ip: CONTROLLER_IP
-      controller.vm.network "public_network", bridge: BRIDGE_INTERFACE
+      controller.vm.hostname = "controller"
+      controller.vm.network "private_network", ip: "192.168.56.10", name: HOSTONLY_NAME
       controller.vm.provider "virtualbox" do |vb|
-                vb.name=CONTROLLER_NAME
-                vb.memory = CONTROLLER_RAM
+                vb.name="controller"
+                vb.memory = 4096
       end
       controller.vm.provision "shell", inline: <<-SHELL
               echo "Controller shell provisioning hook executed"
-              sudo dnf install -y ansible
+              install -d -m 700 -o vagrant -g vagrant /home/vagrant/.ssh
+              cat /vagrant/automation/vagrant/bootstrap-keys/bootstrap_id_rsa >> /home/vagrant/.ssh/bootstrap_id_rsa
+              chown vagrant:vagrant /home/vagrant/.ssh/bootstrap_id_rsa
+              chmod 600 /home/vagrant/.ssh/bootstrap_id_rsa
+              echo "SSH key setup completed on controller"
               git clone https://github.com/TheSubtleArtist/myLinuxTraining.git
-              cd /myLinuxTraining/automation/ansible
-              ansible-playbook -i inventory provision.yml
+
       SHELL
     end
 

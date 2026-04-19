@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-KEY_DIR="automation/vagrant/bootstrap-keys"
+KEY_DIR="vagrant/bootstrap-keys"
 KEY_FILE="${KEY_DIR}/bootstrap_id_rsa"
 
 mkdir -p "${KEY_DIR}"

@@ -26,11 +26,12 @@
         mode: 0600
         owner: student
         group: student
-    - name: Install Ansible
+    - name: Install Basic Packages
       yum:
         name: 
-          - ansible
           - python3-pip
+          - ansible
+          - git 
         state: present
     - name: Clone myLinuxTraining repository
       git:

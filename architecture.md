@@ -9,6 +9,7 @@
   - [2.6 Required Host Tools](#26-required-host-tools)
   - [2.7 Base Installation Steps](#27-base-installation-steps)
   - [2.8 Vagrant Provisioning Baseline](#28-vagrant-provisioning-baseline)
+  - [2.10 Ansible Workflow](#210-ansible-workflow)
   - [2.11 Controller Bootstrap Model](#211-controller-bootstrap-model)
   - [2.12 SSH Trust and Access Model](#212-ssh-trust-and-access-model)
   - [2.13 Baseline Validation Checklist](#213-baseline-validation-checklist)
@@ -32,13 +33,13 @@ Use the following lifecycle terminology consistently throughout the lab architec
 
 ```text
 prepare -> provision -> install -> configure -> validate -> snapshot -> rebuild
-````
+```
 
 This lifecycle defines the standard vocabulary for the lab:
 
-  * **prepare** — verify tools, create directories, place installation media, and confirm host networking
+  * **prepare** — verify tools, create directories, confirm host networking, and verify required artifacts
   * **provision** — define and start VMs with Vagrant and the VirtualBox provider
-  * **install** — complete the controller install flow, then install remaining nodes through Kickstart
+  * **install** — establish the approved Rocky Linux guest baseline from the base box and complete first-boot package preparation
   * **configure** — apply baseline settings and automation with Ansible
   * **validate** — confirm connectivity, service state, access, and automation readiness
   * **snapshot** — create a stable rollback point in the VirtualBox GUI
@@ -65,6 +66,8 @@ This lifecycle defines the standard vocabulary for the lab:
 The architecture uses a three-node Rocky Linux lab on VirtualBox. Vagrant manages VM definition and startup with the VirtualBox provider. The `controller` node also serves as the Ansible control node. Hosts `server1` and `server2` act as managed targets for storage, networking, security, services, monitoring, and troubleshooting exercises.
 
 Capstone scenarios occur after the module sequence and use this same environment for fault injection, recovery, validation, and rebuild workflows.
+
+This architecture supports the revised 12-module curriculum. **Modules 11 and 12 replace the former standalone gap-coverage section by retaining all non-direct-integration exercises in a structured advanced-extension track.** Where Linux+ objectives reference Kickstart, the program retains conceptual awareness but does **not** implement Kickstart in the lab architecture.
 
 ---
 
@@ -146,32 +149,21 @@ myLinuxTraining/
 ├── automation/
 │   ├── vagrant/
 │   │   ├── Vagrantfile
-│   │   ├── variables.env
-│   │   ├── provisioning-hooks/
+│   │   ├── bootstrap-keys/
 │   │   ├── synced-folders.md
 │   │   └── README.md
 │   │
-│   ├── iso/
-│   │   └── Rocky-9.7-x86_64-minimal.iso
-│   │
-│   ├── ansible/
-│   │   ├── inventory.ini
-│   │   ├── ansible.cfg
-│   │   ├── group_vars/
-│   │   ├── host_vars/
-│   │   ├── roles/
-│   │   │   ├── common/
-│   │   │   ├── ssh_hardening/
-│   │   │   ├── storage_lab/
-│   │   │   ├── webserver/
-│   │   │   └── monitoring/
-│   │   ├── playbooks/
-│   │   │   ├── bootstrap.yml
-│   │   │   ├── distribute_keys.yml
-│   │   │   ├── install_tools.yml
-│   │   │   └── baseline_hardening.yml
-│   │   └── files/
-│   │
+│   └── ansible/
+│       ├── bootstrap_inventory.yml
+│       ├── inventory.yml
+│       ├── bootstrap_controller.yml
+│       ├── provision_managed_hosts.yml
+│       ├── validate_managed_hosts.yml
+│       ├── group_vars/
+│       ├── host_vars/
+│       ├── roles/
+│       └── files/
+│
 ├── exercises/
 │   ├── module-01-foundations/
 │   ├── module-02-boot-kernel-devices/
@@ -229,14 +221,13 @@ The host environment must support:
 
 * Vagrant with the VirtualBox provider
 * a working VirtualBox GUI for snapshot management
-* a fixed local path for the Rocky Linux ISO
 * Git-based version tracking for provisioning and automation content
 
 The accepted tool stack for the program is consistent throughout the document set:
 
 * VirtualBox
 * Vagrant
-* Kickstart
+* Rocky Linux 9.7 base box
 * Ansible
 * Git
 
@@ -259,9 +250,6 @@ The accepted tool stack for the program is consistent throughout the document se
 *.vbox
 *.vbox-prev
 *.log
-
-# ISO
-*.iso
 
 # Ansible retry files
 *.retry
@@ -312,9 +300,9 @@ The lab uses **Vagrant with the VirtualBox provider** as the only provisioning p
 
 * Vagrant defines the VM topology and starts the nodes
 * VirtualBox provides the hypervisor platform and GUI snapshot support
-* the controller installation establishes the first usable automation node
-* the remaining nodes are installed through the accepted Kickstart workflow
-* configuration and state convergence are handled by Ansible after installation
+* Vagrant provisions the approved three-node Rocky Linux base-box topology
+* the controller is reached first for local bootstrap and control-node preparation
+* configuration and state convergence are handled by Ansible after first boot
 
 ### Single `Vagrantfile` Standard
 
@@ -328,9 +316,6 @@ View the [Vagrant File](https://github.com/TheSubtleArtist/myLinuxTraining/blob/
 
 ---
 
-Below is a git-ready Markdown replacement for the affected architecture sections. It updates the execution model, clarifies bootstrap versus steady-state operations, and makes the SSH trust model explicit. It is written to align with the architecture you originally intended, while correcting the ambiguity that led to the later implementation issues.
-
-````markdown
 ## 2.10 Ansible Workflow
 
 ### Configuration Scope
@@ -388,21 +373,21 @@ controller VM
 server1 / server2
   -> act as managed nodes
   -> trust the controller through the installed public key
-````
+```
 
 ---
 
 ### Workflow Stages
 
-| Stage     | Tool                      | Output                                                 |
-| --------- | ------------------------- | ------------------------------------------------------ |
-| prepare   | Git, host tools           | repository, ISO, verified prerequisites                |
-| provision | Vagrant                   | three-node VM topology                                 |
-| install   | Rocky Linux / Kickstart   | installed controller and managed nodes                 |
-| configure | Ansible                   | controller bootstrap, users, keys, packages, baseline  |
-| validate  | Ansible / Bash            | reachability, SSH trust, package state, host readiness |
-| snapshot  | VirtualBox GUI            | stable rollback point                                  |
-| rebuild   | Vagrant/Kickstart/Ansible | recovered and revalidated node                         |
+| Stage     | Tool                           | Output                                                |
+| --------- | ------------------------------ | ----------------------------------------------------- |
+| prepare   | Git, host tools                | repository, verified prerequisites, host-only network |
+| provision | Vagrant                        | three-node Rocky Linux base-box topology              |
+| install   | Rocky Linux base box           | installed guest baseline ready for first boot         |
+| configure | Ansible                        | controller bootstrap, users, keys, packages, baseline |
+| validate  | Ansible / Bash                 | reachability, SSH trust, package state, host readiness|
+| snapshot  | VirtualBox GUI                 | stable rollback point                                 |
+| rebuild   | Vagrant/Ansible                | recovered and revalidated node                        |
 
 ---
 
@@ -415,7 +400,7 @@ Recommended playbook sequence:
 | Playbook                      | Purpose                                                                                                           |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `bootstrap_controller.yml`    | prepares the controller to act as the Ansible control node                                                        |
-| `configure_managed_hosts.yml` | creates users, prepares SSH directories, distributes public keys, and installs baseline packages on managed nodes |
+| `provision_managed_hosts.yml` | creates users, prepares SSH directories, distributes public keys, and installs baseline packages on managed nodes |
 | `validate_managed_hosts.yml`  | verifies that managed nodes meet the expected baseline state                                                      |
 
 This split prevents circular dependencies and keeps local controller preparation separate from remote host configuration.
@@ -440,7 +425,7 @@ For controller-local tasks, Ansible should use `connection: local` instead of SS
 ### Operational Expectations
 
 * provisioning changes are tracked in Git
-* installation changes are captured in Kickstart files
+* guest-baseline assumptions are captured in the Vagrant definition and approved base box
 * controller bootstrap changes are captured in Ansible bootstrap playbooks
 * managed host changes are captured in Ansible configuration playbooks and roles
 * validation changes are captured in dedicated validation playbooks
@@ -451,6 +436,7 @@ The accepted automation tool stack is identical throughout the program:
 
 * VirtualBox
 * Vagrant
+* Rocky Linux 9.7 base box
 * Ansible
 * Git
 
@@ -601,8 +587,3 @@ After baseline validation is complete, create a VirtualBox GUI snapshot for each
 ### Capstone Support Statement
 
 After the module sequence is complete, capstone scenarios use the same validated environment for service restoration, troubleshooting, security review, and rebuild exercises. This preserves a single source-of-truth lab architecture across the full 12-module program and the capstone phase.
-
-```
-
-The next update I would make after this is the repository structure section, so it explicitly includes `bootstrap_controller.yml`, `configure_managed_hosts.yml`, and `validate_managed_hosts.yml`.
-```

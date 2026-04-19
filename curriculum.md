@@ -34,13 +34,13 @@
 
 The progressive curriculum is organized into **12 modules**. Modules **1 through 10** remain the preserved core certification-aligned learning path. Modules **11 and 12** formalize the advanced-extension material that was previously separated from the mainline sequence.
 
-The curriculum is re-engineered around **VirtualBox and Vagrant for host-side provisioning**, while retaining **Kickstart for installation automation**, **Ansible for configuration automation**, and **Git for version control and iteration**.
+The curriculum is re-engineered around **VirtualBox and Vagrant for host-side provisioning**, while using a **generic Rocky Linux 9.7 base box as the installed guest baseline**, **Ansible for configuration automation**, and **Git for version control and iteration**. Where Linux+ objectives reference Kickstart, this program covers the concept at a high level but does **not** implement Kickstart in the lab environment.
 
 Use the following lifecycle vocabulary consistently throughout the program:
 
 ```text
 prepare -> provision -> install -> configure -> validate -> snapshot -> rebuild
-````
+```
 
 **Modules 11 and 12 replace the former standalone gap-coverage section by retaining all non-direct-integration exercises in a structured advanced-extension track.**
 
@@ -2185,7 +2185,7 @@ Extend container-networking understanding beyond basic port publishing.
 
 ### Module Purpose
 
-Build automation fluency across shell scripting, Git workflows, Ansible, Vagrant, Kickstart awareness, Python basics, and responsible AI-assisted operations.
+Build automation fluency across shell scripting, Git workflows, Ansible, Vagrant, base-box provisioning awareness, Python basics, and responsible AI-assisted operations.
 
 ### Core Exercises
 
@@ -2431,23 +2431,23 @@ Relate Vagrant abstractions to the underlying VirtualBox lab topology.
 
 ---
 
-#### Exercise 9.13 — Review Kickstart Deployment Workflow
+#### Exercise 9.13 — Review Base-Box and First-Boot Workflow
 
 **Objective**
 
-Understand how Kickstart fits into the accepted lab lifecycle.
+Understand how the approved Rocky Linux base box fits into the accepted lab lifecycle.
 
 **Tasks**
 
-1. Document the role of `controller` in serving Kickstart files.
-2. Record the Kickstart boot parameter used for the managed nodes.
-3. Compare semi-automated controller installation to the server install flow.
-4. Identify one failure point in the Kickstart delivery path.
+1. Document the role of the approved base box in establishing the initial guest baseline.
+2. Record which responsibilities belong to Vagrant during provision and which belong to Ansible during configure.
+3. Compare first-boot controller bootstrap to later managed-host convergence.
+4. Identify one failure point in the first-boot bootstrap path.
 
 **Optional Challenge Tasks**
 
 1. Record one reason the controller-first design is useful for training.
-2. Compare unattended install benefits to manual consistency risks.
+2. Compare standardized base-box provisioning to manual consistency risks.
 
 ---
 
@@ -2788,13 +2788,13 @@ Understand network-based installation and provisioning concepts.
 
 1. Document the sequence of a PXE boot from DHCP to installer fetch.
 2. Identify the roles of DHCP, TFTP, and the boot image.
-3. Relate PXE to Kickstart-based unattended deployment.
+3. Relate PXE to unattended deployment concepts used in enterprise environments.
 4. Record one enterprise use case for PXE.
 5. Record one failure point that would prevent network boot.
 
 **Optional Challenge Tasks**
 
-1. Compare PXE to ISO-based installation in the lab.
+1. Compare PXE to base-box provisioning in the lab.
 2. Record one reason PXE is common in fleet provisioning.
 
 ---
@@ -3224,7 +3224,7 @@ A baseline automation run did not complete successfully, and two managed nodes a
 **Required Skills**
 
 * Vagrant workflow review
-* Kickstart path validation
+* controller bootstrap path validation
 * Ansible inventory and playbook review
 * logs
 * validation discipline
@@ -3232,7 +3232,7 @@ A baseline automation run did not complete successfully, and two managed nodes a
 **Tasks**
 
 1. Determine whether the failure originated during `provision`, `install`, or `configure`.
-2. Review the `Vagrantfile`, Kickstart delivery path, and Ansible inventory.
+2. Review the `Vagrantfile`, controller bootstrap path, and Ansible inventory.
 3. Identify the first failing step in the workflow.
 4. Apply a safe remediation.
 5. Re-run validation checks and document the corrected state.
@@ -3401,14 +3401,14 @@ Automation is embedded across the curriculum to reinforce version-controlled inf
 
 ---
 
-### Automation Exercise A3 — Serve Kickstart from the Controller
+### Automation Exercise A3 — Bootstrap the Controller After Provisioning
 
 **Tasks**
 
-1. Install and enable the web service on `controller`.
-2. Copy Kickstart files into the document root.
-3. Validate access to the Kickstart URL.
-4. Boot a server using the Kickstart URL.
+1. Reach `controller` with the bootstrap access path after `vagrant up`.
+2. Run `bootstrap_controller.yml` locally on `controller`.
+3. Verify that Ansible is installed and the automation SSH keypair is present.
+4. Confirm that `controller` is ready to configure `server1` and `server2`.
 
 ---
 
@@ -3485,7 +3485,7 @@ Automation is embedded across the curriculum to reinforce version-controlled inf
 **Tasks**
 
 1. Destroy or discard a noncritical node.
-2. Rebuild it using Vagrant and Kickstart.
+2. Rebuild it using Vagrant and reapply the baseline with Ansible.
 3. Reapply baseline configuration with Ansible.
 4. Validate the recovered state.
 5. Record the recovery time and lessons learned.

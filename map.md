@@ -39,7 +39,7 @@ This document defines the Linux+ XK0-006 course map for a hands-on administrator
 The program is re-engineered around:
 
 - **VirtualBox and Vagrant** for host-side provisioning
-- **Kickstart** for installation automation
+- a **generic Rocky Linux 9.7 base box** as the installed guest baseline
 - **Ansible** for configuration automation
 - **Git** for version control and iteration
 
@@ -51,9 +51,9 @@ Use the following lifecycle vocabulary consistently across the repository:
 
 ```text
 prepare -> provision -> install -> configure -> validate -> snapshot -> rebuild
-````
+```
 
-This course map aligns to the rewritten architecture and the revised 12-module curriculum.
+This course map aligns to the rewritten architecture and the revised 12-module curriculum. Where Linux+ objectives reference Kickstart, the program retains conceptual awareness but does **not** implement Kickstart in the lab architecture.
 
 ---
 
@@ -354,7 +354,7 @@ Learners should be able to:
 
 ### Module Description
 
-Builds automation fluency through shell scripting, Ansible, Vagrant-driven provisioning workflows, Kickstart deployment awareness, Git workflows, Python basics, and responsible AI-assisted operations.
+Builds automation fluency through shell scripting, Ansible, Vagrant-driven provisioning workflows, base-box and first-boot workflow awareness, Git workflows, Python basics, and responsible AI-assisted operations.
 
 ### Covered Linux+ Exam Objectives
 
@@ -375,7 +375,7 @@ Builds automation fluency through shell scripting, Ansible, Vagrant-driven provi
 * **4.3** Given a scenario, use infrastructure and configuration automation concepts
 
   * version-controlled infrastructure provisioning
-  * Kickstart
+  * unattended deployment concepts at a high level
   * Ansible
   * validation and rebuild workflows
 * **4.4** Given a scenario, use Python and related tooling
@@ -395,7 +395,7 @@ Learners should be able to:
 
 * automate repeated administration tasks
 * manage infrastructure and configuration workflows through versioned artifacts
-* use Vagrant, Kickstart, Ansible, and Git in support of Linux operations
+* use Vagrant, the approved Rocky Linux base box, Ansible, and Git in support of Linux operations
 * use Python and AI assistance with review and operational judgment
 
 ---
@@ -784,8 +784,8 @@ This program is designed to cover the Linux+ XK0-006 objective set through:
 * capstone scenarios
 * automation-first workflows
 * operational troubleshooting practice
+* controller-based Ansible operations
+* Vagrant-provisioned Rocky Linux base-box environments
 
 The resulting structure removes the standalone gap-coverage section, preserves the integrity of the original 10-module path, and retains full exercise coverage through Modules 11 and 12.
-
-```
 

@@ -24,6 +24,5 @@ This program is designed to cover the Linux+ XK0-006 objective set through:
 * capstone scenarios
 * automation-first workflows
 * operational troubleshooting practice
-* 
-```
-
+* controller-based Ansible operations
+* Vagrant-provisioned Rocky Linux base-box environments

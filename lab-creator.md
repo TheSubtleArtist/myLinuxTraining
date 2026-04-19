@@ -1152,7 +1152,7 @@ Use:
 
 Use:
 
-- **Kickstart** for installation automation
+- a **generic Rocky Linux 9.7 base box** as the installed guest baseline
 - **Ansible** for configuration automation
 - **Git** for version control and iteration
 
@@ -1168,7 +1168,9 @@ Assume:
   - `server2`
 - a **generic Rocky Linux base box**
 - a **manual installer flow for `controller`**
-- `controller` then hosts Kickstart content for `server1` and `server2`
+- the three nodes share the approved base-box baseline and are then differentiated through controller-led Ansible automation
+
+Do not implement Kickstart in the generated lab architecture. If Linux+ objective coverage requires Kickstart awareness, cover it conceptually without using it in the lab workflow.
 
 Vagrant is responsible for:
 
@@ -1181,9 +1183,9 @@ Vagrant is responsible for:
 
 Snapshots are managed directly in the **VirtualBox GUI**.
 
-### Fixed ISO Convention
+### Base Box Convention
 
-Require a fixed local ISO path convention for all learners.
+Require a consistent Rocky Linux 9.7 base-box reference for all learners and generated documentation.
 
 ---
 
